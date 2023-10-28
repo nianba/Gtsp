@@ -1,20 +1,14 @@
 # -*- coding:utf-8 -*-
-# author: xkey
-# 禁忌搜索
-# 邻域 邻域动作 禁忌表 候选集合 评价函数 特赦规则
 import random
 import numpy as np
-from mtsp_base import MtspBase,City
+from gtsp_base import GtspBase,City
 from common import PltResult, TestCaseGenerate, PltProcess
 
-seed = 0
-random.seed(seed)
-
-class ACOMtsp(MtspBase):
+class ACOGtsp(GtspBase):
     def __init__(self, cities:list[tuple], typeList:list[int], 
                  iters = 100, antsNum = 20, alpha = 1, beta = 2, rho = 0.8):
         """
-        ACOMtsp.
+        ACOGtsp.
 
         :param cities: city list e.g. [(0,0),(0,1)...]
         :param typeList: should be continue integers begin with 0  e.g.[0,1,2...n-1,n]
@@ -29,7 +23,6 @@ class ACOMtsp(MtspBase):
         #初始化缩放比例（防止城市之间距离过大或过小造成的影响)
 
         self.zoomRate = np.median(self.distanceMatrix)
-        # exit()
 
         #初始化启发矩阵和信息素矩阵
         self.heuristicMatrix = 1 / ( ((self.distanceMatrix + 1e-3)/self.zoomRate) ** beta)
@@ -51,8 +44,12 @@ class ACOMtsp(MtspBase):
                 weight = (self.pheromoneMartix[startId][goalID] ** self.alpha) \
                             * self.heuristicMatrix[startId][goalID]
                 weightList.append(weight)
-        if sum(weightList) <= 0.0:
+        
+        choice = random.choices([0,1,2],[0.,0.1,0.9])[0] #0完全随机选 1选择最优 2按比重选择 
+        if choice == 0 or sum(weightList) <= 0.0:
             res = random.choices(choiceList)[0]
+        elif choice == 1:
+            res = choiceList[weightList.index(max(weightList))]
         else:
             res = random.choices(choiceList , weightList)[0]
         return res
@@ -107,6 +104,12 @@ class ACOMtsp(MtspBase):
                 
                 historyBestValue.append(bestValue)
 
+            #精英蚂蚁优化
+            for cityIndex in range(self.typeNum):
+                startCity = bestSolution[cityIndex]
+                goalCity = bestSolution[(cityIndex + 1) % self.typeNum]
+                self.pheromoneMartix[startCity.id][goalCity.id] += (1 - self.rho) *  (initValue / self.zoomRate)
+
         return bestSolution,bestValue,historyBestValue
 
 
@@ -115,7 +118,8 @@ class ACOMtsp(MtspBase):
 if __name__ == '__main__': 
     cityPosList, goodsTypes = TestCaseGenerate(citynum = 100, typenum = 20, 
                                                scaleMax = 20, seed = seed)
-    aco = ACOMtsp(cityPosList,goodsTypes)
+    print(cityPosList)
+    aco = ACOGtsp(cityPosList,goodsTypes)
     bestSolution, bestValue, historyBestValue = aco.findPath()
 
     print(bestSolution)

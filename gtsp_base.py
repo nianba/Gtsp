@@ -21,10 +21,10 @@ class City():
     def __repr__(self):
         return str(self.pos)
     
-class MtspBase(ABC):
+class GtspBase(ABC):
     def __init__(self, cities:list[tuple], typeList:list[int], iters = 1000):
         """
-        MtspBase.
+        GtspBase.
 
         :param cities: city list e.g. [(0,0),(0,1)...]
         :param typeList: should be continue integers begin with 0  e.g.[0,1,2...n-1,n]

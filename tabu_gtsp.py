@@ -1,20 +1,14 @@
 # -*- coding:utf-8 -*-
-# author: xkey
-# 禁忌搜索
-# 邻域 邻域动作 禁忌表 候选集合 评价函数 特赦规则
 import random
 import numpy as np
-from mtsp_base import MtspBase,City
+from gtsp_base import GtspBase,City
 from common import PltResult, TestCaseGenerate, PltProcess
 
-seed = 0
-random.seed(seed)
-
-class TabuMtsp(MtspBase):
+class TabuGtsp(GtspBase):
     def __init__(self, cities:list[tuple], typeList:list[int], 
-                 iters = 1000, tabuLimit = 50, maxCandidateNum = None, choice = 0.5):
+                 iters = 1000, tabuLimit = 20, maxCandidateNum = None, choice = 0.5):
         """
-        TabuMtsp.
+        TabuGtsp.
 
         :param cities: city list e.g. [(0,0),(0,1)...]
         :param typeList: should be continue integers begin with 0  e.g.[0,1,2...n-1,n]
@@ -108,8 +102,9 @@ class TabuMtsp(MtspBase):
 if __name__ == '__main__': 
     cityPosList, goodsTypes = TestCaseGenerate(citynum = 100, typenum = 20, 
                                                scaleMax = 20, seed = seed)
-    tabu = TabuMtsp(cityPosList,goodsTypes)
+    tabu = TabuGtsp(cityPosList,goodsTypes)
     bestSolution, bestValue, historyBestValues = tabu.findPath()
+    print([city.goodsType for city in bestSolution])
 
     print(bestSolution, bestValue)
     ##### 显示收敛情况 #####

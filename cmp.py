@@ -1,21 +1,21 @@
 import random
 import numpy as np
-from tabu_mtsp import TabuMtsp
-from aco_mtsp import ACOMtsp
+from tabu_gtsp import TabuGtsp
+from aco_gtsp import ACOGtsp
 from common import PltResult, TestCaseGenerate, PltProcess
 import time
-seed = 0
-random.seed(seed)
+# seed = 0
+# random.seed(seed)
 if __name__ == '__main__': 
-    cityPosList, goodsTypes = TestCaseGenerate(citynum = 100, typenum = 20, 
-                                               scaleMax = 200)
+    cityPosList, goodsTypes = TestCaseGenerate(citynum = 200, typenum = 150, 
+                                               scaleMax = 20)
     time_tabu_begin = time.time()
-    tabu = TabuMtsp(cityPosList,goodsTypes)
+    tabu = TabuGtsp(cityPosList,goodsTypes)
     bestSolution, bestValue, historyBestValues = tabu.findPath()
     print(bestSolution, bestValue)
 
     time_aco_begin = time.time()
-    aco = ACOMtsp(cityPosList, goodsTypes)
+    aco = ACOGtsp(cityPosList, goodsTypes)
     bestSolution, bestValue, historyBestValues = aco.findPath()
     print(bestSolution, bestValue)
 
